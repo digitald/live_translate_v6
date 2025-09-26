@@ -8,6 +8,7 @@ config.py
 /audio_files/
 /notes/
 /transcripts/
+/audio/
 
 # File di cache e di ambiente di Python
 __pycache__/
