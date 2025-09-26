@@ -47,15 +47,27 @@ def serve_audio(filename):
 @app.route("/download_transcript")
 def download_transcript():
     session_id = request.args.get("session_id")
-    if session_id and session_id in shared_state.session_transcripts:
-        session = shared_state.session_transcripts[session_id]
-        lines = [f"[{r['timestamp']}] IT: {r['italian']}\nEN: {r['english']}\n" for r in session["transcripts"]]
-        text = "\n".join(lines)
-        filename = f"trascrizione_{session_id}.txt"
-    else:
-        return "Sessione non trovata o non specificata.", 404
+    if not session_id:
+        return "ID sessione non specificato.", 400
+
+    # ✅ CORREZIONE: Cerca il file direttamente nella cartella, invece che in memoria.
+    transcript_filename = f"trascrizione_{session_id}.txt"
+    transcript_filepath = Path(config.TRANSCRIPTS_DIR) / transcript_filename
+
+    if not transcript_filepath.exists():
+        # Controlla se è la sessione attiva (il cui file non è ancora stato salvato)
+        if session_id == shared_state.current_session_id and shared_state.session_active:
+             # Genera il contenuto al volo per la sessione live
+            session_data = shared_state.session_transcripts.get(session_id)
+            if session_data and session_data.get("transcripts"):
+                lines = [f"[{r.get('timestamp', '')}] IT: {r.get('italian', '')}\nEN: {r.get('english', '')}\n" for r in session_data["transcripts"]]
+                text = "\n".join(lines)
+                return Response(text, mimetype="text/plain", headers={"Content-Disposition": f"attachment;filename={transcript_filename}"})
+
+        return "File della trascrizione non trovato. Potrebbe non essere ancora stato salvato.", 404
     
-    return Response(text, mimetype="text/plain", headers={"Content-Disposition": f"attachment;filename={filename}"})
+    # Se il file esiste, lo serve per il download.
+    return send_from_directory(config.TRANSCRIPTS_DIR, transcript_filename, as_attachment=True)
 
 @app.route("/download_notes/<session_id>")
 def download_notes(session_id):

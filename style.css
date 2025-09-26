@@ -1,0 +1,161 @@
+/* style.css - Tema Scuro Moderno */
+
+:root {
+  --primary-color: #0d6efd; /* Un blu più vibrante */
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --background-color: #121212; /* Sfondo principale nero/grigio scuro */
+  --container-bg: #1e1e1e;   /* Sfondo dei contenitori */
+  --light-gray: #2a2a2a;      /* Sfondo della trascrizione */
+  --border-color: #444;       /* Colore dei bordi */
+  --text-color: #f8f9fa;      /* Testo principale chiaro */
+  --text-muted: #adb5bd;      /* Testo secondario */
+  --container-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 15px;
+  background: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px; 
+  margin: 0 auto;
+  background: var(--container-bg);
+  border-radius: 12px;
+  box-shadow: var(--container-shadow);
+  padding: 25px;
+  border: 1px solid var(--border-color);
+}
+
+h1 { 
+  font-size: 1.8em; 
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.status {
+  text-align: center;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+}
+.status.connected { color: #20c997; }
+.status.disconnected { color: #dc3545; }
+.status.connecting { color: #ffc107; }
+
+.player-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+  justify-content: center;
+}
+
+button {
+  padding: 12px 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1em;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  color: white;
+}
+button:hover:not(:disabled) { filter: brightness(110%); }
+button:active:not(:disabled) { transform: scale(0.97); }
+button:disabled {
+  background: #495057;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.btn-primary { background: var(--primary-color); }
+.btn-secondary { background: var(--secondary-color); }
+.btn-success { background: var(--success-color); }
+
+#player { 
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 15px 0;
+  border-radius: 8px;
+}
+
+.log-container {
+  margin-top: 1em; 
+  max-height: 40vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  background: var(--light-gray);
+}
+
+.entry { border-bottom: 1px solid var(--border-color); padding: 12px 5px; }
+.entry:last-child { border-bottom: none; }
+.it { color: var(--text-muted); font-size: 0.95em; }
+.en { color: #a5d8ff; font-size: 1.05em; font-weight: 600; }
+.timestamp { font-size: 0.75em; color: var(--text-muted); margin-top: 8px; }
+
+.session-controls {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.03); /* Leggera trasparenza */
+}
+.session-controls h3 { margin-top: 0; color: var(--text-color); }
+.session-info { text-align: center; margin-bottom: 15px; word-wrap: break-word; }
+
+/* REGOLE PER IL POP-UP (MODAL) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8); /* Sfondo scuro trasparente */
+}
+.modal-content {
+  background-color: var(--container-bg);
+  border: 1px solid var(--border-color);
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover { color: white; }
+.session-item { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+.session-item:hover { background-color: var(--light-gray); }
+
+/* LAYOUT DESKTOP A DUE COLONNE */
+@media (min-width: 992px) {
+  .main-content { display: flex; gap: 25px; align-items: flex-start; }
+  .left-column { flex: 0 0 30%; max-width: 400px; }
+  .right-column { flex: 1; position: sticky; top: 15px; }
+  .log-container { margin-top: 0; max-height: 80vh; }
+  .modal-content { margin: 10% auto; }
+}
