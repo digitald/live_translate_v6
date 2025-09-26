@@ -1,0 +1,15 @@
+# File di configurazione con dati sensibili
+config.py
+
+# .bat di partenza
+*.bat
+
+# Cartelle con file generati dall'applicazione
+/audio_files/
+/notes/
+/transcripts/
+
+# File di cache e di ambiente di Python
+__pycache__/
+*.pyc
+.env

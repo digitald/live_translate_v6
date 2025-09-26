@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Live View</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            width: 90vw;
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+        }
+
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Mantiene le proporzioni del video */
+        }
+
+        .subtitle-overlay {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            padding: 15px 25px;
+            background-color: rgba(0, 0, 0, 0.75);
+            border-radius: 10px;
+            font-size: 2.5vw; /* Dimensione del testo reattiva */
+            text-align: center;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            transition: opacity 0.3s;
+            opacity: 0; /* Inizia nascosto */
+        }
+
+        @media (min-width: 992px) {
+            .subtitle-overlay {
+                font-size: 2.2em; /* Dimensione fissa su schermi grandi */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video id="webcam" autoplay playsinline muted></video>
+        <div id="subtitles" class="subtitle-overlay"></div>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('webcam');
+        const subtitlesElement = document.getElementById('subtitles');
+
+        // 1. Connessione al server Socket.IO
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('✅ Connected to server for subtitles.');
+        });
+
+        // 2. Accesso alla webcam
+        async function setupWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false // Non ci serve l'audio qui, lo cattura il server
+                });
+                videoElement.srcObject = stream;
+            } catch (err) {
+                console.error("❌ Error accessing webcam:", err);
+                alert("Could not access the webcam. Please check permissions and try again.");
+            }
+        }
+
+        // 3. Ascolto per le nuove traduzioni
+        socket.on('new_translation', (data) => {
+            const englishText = data.english || "";
+            if (englishText) {
+                subtitlesElement.textContent = englishText;
+                subtitlesElement.style.opacity = 1; // Rendi visibili i sottotitoli
+            } else {
+                subtitlesElement.style.opacity = 0; // Nascondi se non c'è testo
+            }
+        });
+
+        // Avvia la webcam al caricamento della pagina
+        window.addEventListener('load', setupWebcam);
+    </script>
+
+</body>
+</html>
